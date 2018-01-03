@@ -14,8 +14,9 @@ import simulation.motor.LinearAttachment;
 import simulation.motor.Motor;
 import simulation.motor.Motor.MotorType;
 import simulation.motor.MotorSystem;
+import simulation.test.Testable;
 
-public class ElevatorSim implements Loopable {
+public class ElevatorSim implements Loopable, Testable {
 	Elevator elevator;
 	SystemManager manager;
 	MotorSystem system;
@@ -59,27 +60,31 @@ public class ElevatorSim implements Loopable {
 				e.printStackTrace();
 			}
 		}).start();
-		sim.testElevator();
-
+		sim.test();
 	}
 
-	public void testElevator() throws InterruptedException {
-		enabled = true;
-		Thread.sleep(5000);
-		System.out.println(elevator.getState());
+	public void test() {
+		try {
+			enabled = true;
+			Thread.sleep(5000);
 
-		// check that zeroing finished
-		assert elevator.getState() == Elevator.State.RUNNING : "elevator not in correct state, " + elevator.getState();
-		double posInaccuracy = elevator.elevatorController.getSource().get() - positionInput.get();
+			System.out.println(elevator.getState());
 
-		// test zeroing offset
-		assert Math.abs(posInaccuracy) < .5 : "zeroing failed, elevator has wrong position value, " + posInaccuracy;
+			// check that zeroing finished
+			assert elevator.getState() == Elevator.State.RUNNING : "elevator not in correct state, "
+					+ elevator.getState();
+			double posInaccuracy = elevator.elevatorController.getSource().get() - positionInput.get();
 
-		// check elevator PID stability
-		elevator.elevatorController.setSetpoint(90);
-		Thread.sleep(3000);
-		assert elevator.elevatorController.onTarget(1) : "elevator PID unstable";
-		enabled = false;
-		System.out.println("TEST SUCCESSFULL");
+			// test zeroing offset
+			assert Math.abs(posInaccuracy) < .5 : "zeroing failed, elevator has wrong position value, " + posInaccuracy;
+
+			// check elevator PID stability
+			elevator.elevatorController.setSetpoint(90);
+			Thread.sleep(3000);
+			assert elevator.elevatorController.onTarget(1) : "elevator PID unstable";
+			enabled = false;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 }
