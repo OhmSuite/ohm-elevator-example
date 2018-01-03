@@ -1,7 +1,6 @@
 package org.usfirst.frc.team1389.robot;
 
 public class RobotConstants {
-	public static final int MaxConcurrentThreads = 20;
 
 	/**
 	 * constants for odometry calculations
@@ -17,5 +16,7 @@ public class RobotConstants {
 	public static final double MaxVelocity = 22; // m/s
 	public static final double MaxAcceleration = 22; // m/s^2
 	public static final double MaxDeceleration = 22; // m/s^2
+
+	public static final double ElevatorZeroSpeed = 20; // percent of height per sec;
 
 }
