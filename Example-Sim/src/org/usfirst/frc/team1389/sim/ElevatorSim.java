@@ -30,12 +30,12 @@ public class ElevatorSim implements Loopable {
 		positionInput = system.getPositionInput().mapToRange(0, 1.38).setRange(0, 100);
 		DigitalIn limitSwitch = new DigitalIn(() -> positionInput.get() < .02);
 		RangeIn<Position> encoderPos = positionInput.copy().offset(-positionInput.get());
-		
+
 		new Watcher(positionInput.getWatchable("ElevatorPos"), encoderPos.getWatchable("encoderPos"))
 				.outputToDashboard();
-		
+
 		elevator = new Elevator(system.getVoltageOutput(), encoderPos, limitSwitch);
-		
+
 		manager = new SystemManager(elevator);
 		manager.init();
 	}
@@ -44,7 +44,6 @@ public class ElevatorSim implements Loopable {
 	public void update() {
 		if (enabled) {
 			manager.update();
-			// System.out.println("updating");
 		}
 		Watcher.update();
 		system.update();
@@ -60,23 +59,27 @@ public class ElevatorSim implements Loopable {
 				e.printStackTrace();
 			}
 		}).start();
-		sim.enabled = true;
+		sim.testElevator();
+
+	}
+
+	public void testElevator() throws InterruptedException {
+		enabled = true;
 		Thread.sleep(5000);
-		System.out.println(sim.elevator.getState());
+		System.out.println(elevator.getState());
 
 		// check that zeroing finished
-		assert sim.elevator.getState() == Elevator.State.RUNNING : "elevator not in correct state, "
-				+ sim.elevator.getState();
-		double posInaccuracy = sim.elevator.elevatorController.getSource().get() - sim.positionInput.get();
+		assert elevator.getState() == Elevator.State.RUNNING : "elevator not in correct state, " + elevator.getState();
+		double posInaccuracy = elevator.elevatorController.getSource().get() - positionInput.get();
 
 		// test zeroing offset
 		assert Math.abs(posInaccuracy) < .5 : "zeroing failed, elevator has wrong position value, " + posInaccuracy;
 
 		// check elevator PID stability
-		sim.elevator.elevatorController.setSetpoint(90);
+		elevator.elevatorController.setSetpoint(90);
 		Thread.sleep(3000);
-		assert sim.elevator.elevatorController.onTarget(1) : "elevator PID unstable";
+		assert elevator.elevatorController.onTarget(1) : "elevator PID unstable";
+		enabled = false;
 		System.out.println("TEST SUCCESSFULL");
-
 	}
 }
