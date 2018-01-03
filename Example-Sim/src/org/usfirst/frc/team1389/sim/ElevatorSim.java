@@ -71,8 +71,8 @@ public class ElevatorSim implements Loopable {
 
 		// check elevator PID stability
 		sim.elevator.elevatorController.setSetpoint(90);
-		Thread.sleep(2000);
-		assert sim.elevator.elevatorController.onTargetStable(.5) : "elevator PID unstable";
+		Thread.sleep(3000);
+		assert sim.elevator.elevatorController.onTarget(1) : "elevator PID unstable";
 		System.out.println("TEST SUCCESSFULL");
 
 	}

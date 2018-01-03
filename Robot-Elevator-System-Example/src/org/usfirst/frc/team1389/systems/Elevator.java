@@ -28,7 +28,7 @@ public class Elevator extends TimedSubsystem {
 		this.elevator = elevator;
 		this.elevatorPos = elevatorPos.copy().mapToRange(0, 100);
 		this.limitSwitch = limitSwitch;
-		elevatorController = new SynchronousPIDController<>(new PIDConstants(100, 0, 0), this.elevatorPos,
+		elevatorController = new SynchronousPIDController<>(new PIDConstants(40, 0, 60), this.elevatorPos,
 				this.elevator);
 		elevatorController.setInputRange(-100, 100);
 
