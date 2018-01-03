@@ -30,9 +30,12 @@ public class ElevatorSim implements Loopable {
 		positionInput = system.getPositionInput().mapToRange(0, 1.38).setRange(0, 100);
 		DigitalIn limitSwitch = new DigitalIn(() -> positionInput.get() < .02);
 		RangeIn<Position> encoderPos = positionInput.copy().offset(-positionInput.get());
+		
 		new Watcher(positionInput.getWatchable("ElevatorPos"), encoderPos.getWatchable("encoderPos"))
 				.outputToDashboard();
+		
 		elevator = new Elevator(system.getVoltageOutput(), encoderPos, limitSwitch);
+		
 		manager = new SystemManager(elevator);
 		manager.init();
 	}
